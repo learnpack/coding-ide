@@ -171,7 +171,9 @@ export default class Home extends React.Component{
                                 else this.loadInstructions(exercises[0].slug);
                             } 
                         })
-                        .catch(error => this.setState({ error: "There was an error loading the excercise list from "+this.state.host }));
+                        .catch(error => {
+                            this.setState({ error: error.message || "There was an error loading the excercise list from "+this.state.host });
+                        });
         
                     //check for changes on the hash
                     window.addEventListener("hashchange", () => this.loadInstructions());
@@ -293,6 +295,10 @@ export default class Home extends React.Component{
             <SmartInput onSave={(value) => {
                 window.location = "?host="+value;
             }} />
+            <button onClick={() => {
+                localStorage.removeItem("exercise-slug");
+                window.location.reload();
+            }}>Clean the localStorage</button>
         </div>;
         const size = {
             vertical: {
