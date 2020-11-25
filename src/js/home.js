@@ -43,7 +43,7 @@ export default class Home extends React.Component{
                         placement: 'left'
                     },
                     {
-                        target: '.bc-terminal .button-bar',
+                        target: '.button-bar',
                         content: <span><h4>3) Compile!</h4>Use the terminal buttons to <code>build</code> and <code>test</code> your exercises solutions.</span>,
                         placement: 'left'
                     },
@@ -194,7 +194,7 @@ export default class Home extends React.Component{
                             consoleStatus: scope.status, 
                             possibleActions: actions.filter(a => data.allowed.includes(a.slug)) 
                         };
-                        if(this.state.tutorial && this.state.tutorial!=='') state.possibleActions.push({ slug: 'tutorial', label: 'Video tutorial', icon: 'fas fa-graduation-cap' });
+                        if(this.state.tutorial && this.state.tutorial!=='') state.possibleActions.push({ slug: 'tutorial', label: 'Tutorial', icon: 'fas fa-graduation-cap' });
                         if(this.state.config && this.state.config.disable_grading) state.possibleActions = state.possibleActions.filter(a => a.slug !== 'test');
                         if(typeof data.code == 'string') state.currentFileContent = data.code;
                         this.setState(state);
@@ -328,6 +328,7 @@ export default class Home extends React.Component{
             />;
 
         if(!this.state.config) return <Loading className="centered-box" />;
+        
         return <div>
             { this.state.helpSteps[this.state.config.editor.mode] && <Joyride
                     steps={this.state.helpSteps[this.state.config.editor.mode]}
@@ -368,6 +369,21 @@ export default class Home extends React.Component{
                         }
                         onOpen={status => this.setState({ menuOpened: status })}
                     >
+                        { !this.state.menuOpened && this.state.files.length > 0 && (!this.state.introOpen || !this.state.intro) &&
+                            <StatusBar
+                                actions={this.state.possibleActions.filter(a => (a.slug === "preview" && this.state.config.onCompilerSuccess === "open-browser") ? false : true)}
+                                status={this.state.consoleStatus}
+                                exercises={this.state.exercises}
+                                disabled={isPending(this.state.consoleStatus)}
+                                onAction={(a) => {
+                                    if(a.confirm !== true || window.confirm("Are you sure?")){
+                                        if(a.slug === 'preview') window.open(this.state.host+'/preview');
+                                        else if(a.slug === 'tutorial') window.open(this.state.tutorial);
+                                        else this.state.compilerSocket.emit(a.slug, { exerciseSlug: this.state.currentSlug });
+                                    }
+                                }}
+                            />
+                        }
                         { this.state.introOpen && this.state.intro ?
                             <Intro url={this.state.intro} onClose={() => this.setState({ introOpen: false })} playing={!showHelp} />
                             :
@@ -407,7 +423,6 @@ export default class Home extends React.Component{
                                     host={this.state.host}
                                     status={this.state.isSaving ? { code: 'saving', message: getStatus('saving') } : this.state.consoleStatus}
                                     logs={this.state.consoleLogs}
-                                    actions={this.state.possibleActions.filter(a => (a.slug === "preview" && this.state.config.onCompilerSuccess === "open-browser") ? false : true)}
                                     onAction={(a) => {
                                         if(a.confirm !== true || window.confirm("Are you sure?")){
                                             if(a.slug === 'preview') window.open(this.state.host+'/preview');

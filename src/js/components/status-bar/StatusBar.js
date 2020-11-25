@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import './status-bar.scss';
 
 const Bar = ({ actions, disabled, onAction, status }) =>
-    <div className={`status-bar fixed ${status ? status.code : ''}`}>
+    <div className={`status-bar ${status ? status.code : ''}`}>
         <div className="button-bar d-inline-block">
             {actions.map(a =>
                 <button type="button" key={a.slug}

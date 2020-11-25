@@ -22,12 +22,6 @@ body{
     h2{ font-size: 22px; }
     h3{ font-size: 18px; }
 }
-.editor-gitpod{
-    .bc-readme{
-        margin-top: 75px;
-        height: calc(100vh - 75px);
-    }
-}
 .prev-next-bar{
     color: white;
     background: #333333;
@@ -45,7 +39,17 @@ body{
         position: fixed;
         top: 0px;
     }
+    .bc-readme{
+        margin-top: 75px;
+        height: calc(100vh - 75px);
+    }
+    .status-bar{
+        position: fixed;
+    }
 }
+// .editor-standalone{
+
+// }
 .centered-box{
     position: absolute;
     top: 50vh;

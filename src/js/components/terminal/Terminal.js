@@ -29,7 +29,7 @@ export default class Terminal extends React.Component {
   render() {
     return (<div className="bc-terminal">
         {(this.props.status) ? <Bar status={this.props.status} />:''}
-        <div className="button-bar">
+        { this.props.actions && <div className="button-bar">
             {this.props.actions.map(a =>
                 <button key={a.slug}
                   disabled={this.props.disabled}
@@ -41,7 +41,7 @@ export default class Terminal extends React.Component {
                     <small>{a.label}</small>
                 </button>
             )}
-        </div>
+        </div>}
         <ul className="logs" style={{height: this.props.height}}  ref={this.messagesEndRef}>
             {this.props.logs.map((log,i)=>(
                 <li key={i}>

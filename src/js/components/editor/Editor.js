@@ -55,6 +55,7 @@ export default class Editor extends React.Component {
             {f.name}
         </button>
     </li>));
+    console.log("Language", languages[this.props.language]);
     return (<div className="bc-editor">
         {(this.props.files && tabs.length>0) ?
             <ul className="nav nav-tabs">{tabs}</ul>:''
