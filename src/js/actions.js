@@ -35,9 +35,9 @@ const actions = {
                         resp.json()
                             .then(error => {
                                 if(error.type == 'not-found-error'){
-                                    const _savedSlug = localStorage.getItem('exercise-slug');
+                                    const _savedSlug = sessionStorage.getItem('exercise-slug');
                                     if(_savedSlug){
-                                        localStorage.clear();
+                                        sessionStorage.clear();
                                         window.location.href = "/";
                                     } 
                                 }

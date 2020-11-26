@@ -164,7 +164,7 @@ export default class Home extends React.Component{
 
                             this.setState({ exercises, error: null });
                             if(!window.location.hash || window.location.hash == '#'){
-                                const _savedSlug = localStorage.getItem('exercise-slug');
+                                const _savedSlug = sessionStorage.getItem('exercise-slug');
                                 if(_savedSlug && typeof _savedSlug == "string" && _savedSlug != ""){
                                     this.loadInstructions(_savedSlug);
                                 }
@@ -245,7 +245,7 @@ export default class Home extends React.Component{
             loadSingleExercise(slug)
                 .then(exercise => {
                     const files = exercise.files.filter(f => f.hidden === false);
-                    localStorage.setItem('exercise-slug', slug);
+                    sessionStorage.setItem('exercise-slug', slug);
                     this.setState({
                         files,
                         currentSlug: slug,
@@ -329,7 +329,7 @@ export default class Home extends React.Component{
 
         if(!this.state.config) return <Loading className="centered-box" />;
         
-        return <div>
+        return <div className={`mode-${this.state.config.editor.mode}`}>
             { this.state.helpSteps[this.state.config.editor.mode] && <Joyride
                     steps={this.state.helpSteps[this.state.config.editor.mode]}
                     continuous={true}

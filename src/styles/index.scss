@@ -33,7 +33,7 @@ body{
         float: right;
     }
 }
-.editor-gitpod{
+.mode-gitpod{
     .prev-next-bar{
         width: 100%;
         position: fixed;
@@ -44,12 +44,11 @@ body{
         height: calc(100vh - 75px);
     }
     .status-bar{
+        margin-top: 40px;
         position: fixed;
+        width: 100vw;
     }
 }
-// .editor-standalone{
-
-// }
 .centered-box{
     position: absolute;
     top: 50vh;
