@@ -18,7 +18,7 @@ const actions = {
                 .then(details => {
                     const exercises = Array.isArray(details) ? details : details.exercises;
 
-                    if(Array.isArray(exercises) && exercises.length >0 ) resolve(exercises);
+                    if(Array.isArray(exercises)) resolve(exercises);
                     else throw new Error('No exercises where found on the currect directory');
                 })
                 .catch((error) => {

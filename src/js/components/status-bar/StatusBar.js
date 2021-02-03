@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import './status-bar.scss';
 
-const Bar = ({ actions, disabled, onAction, status }) =>
+const Bar = ({ actions, disabled, onAction, status }) => console.log("actions", actions) || 
     <div className={`status-bar ${status ? status.code : ''}`}>
         <div className="button-bar d-inline-block">
             {actions.map(a =>

@@ -12,6 +12,7 @@ import { MarkdownParser, Loading } from "@breathecode/ui-components";
 import Socket, { isPending, getStatus } from './socket';
 import { getHost, loadExercises, loadSingleExercise, loadFile, saveFile, loadReadme } from './actions.js';
 import Joyride from 'react-joyride';
+import { LearnPackError } from "./utils";
 import { Session } from 'bc-react-session';
 
 const actions = [
@@ -156,6 +157,8 @@ export default class Home extends React.Component{
         
                     loadExercises()
                         .then((_exercises) => {
+
+                            if(!Array.isArray(_exercises) || _exercises.length == 0) throw new LearnPackError("No exercises have been found");
                             //mark all as not done at the begginning unless they come with a status already
                             const exercises = _exercises.map(e => {
                                 if(e.done === undefined) e.done = false;
@@ -163,7 +166,7 @@ export default class Home extends React.Component{
                             });
 
                             this.setState({ exercises, error: null });
-                            if(!window.location.hash || window.location.hash == '#'){
+                            if((!window.location.hash || window.location.hash == '#')){
                                 const _savedSlug = sessionStorage.getItem('exercise-slug');
                                 if(_savedSlug && typeof _savedSlug == "string" && _savedSlug != ""){
                                     this.loadInstructions(_savedSlug);
@@ -171,7 +174,10 @@ export default class Home extends React.Component{
                                 else this.loadInstructions(exercises[0].slug);
                             } 
                         })
-                        .catch(error => this.setState({ error: "There was an error loading the excercise list from "+this.state.host }));
+                        .catch(error => {
+                            this.setState({ error: error.details || "There was an error loading the excercise list from "+this.state.host });
+                            console.error(error);
+                        });
         
                     //check for changes on the hash
                     window.addEventListener("hashchange", () => this.loadInstructions());
@@ -194,6 +200,7 @@ export default class Home extends React.Component{
                             consoleStatus: scope.status, 
                             possibleActions: actions.filter(a => data.allowed.includes(a.slug)) 
                         };
+                        
                         if(this.state.tutorial && this.state.tutorial!=='') state.possibleActions.push({ slug: 'tutorial', label: 'Tutorial', icon: 'fas fa-graduation-cap' });
                         if(this.state.config && this.state.config.disable_grading) state.possibleActions = state.possibleActions.filter(a => a.slug !== 'test');
                         if(typeof data.code == 'string') state.currentFileContent = data.code;
@@ -369,7 +376,7 @@ export default class Home extends React.Component{
                         }
                         onOpen={status => this.setState({ menuOpened: status })}
                     >
-                        { !this.state.menuOpened && this.state.files.length > 0 && (!this.state.introOpen || !this.state.intro) &&
+                        { !this.state.menuOpened && this.state.possibleActions.length > 0 && (!this.state.introOpen || !this.state.intro) &&
                             <StatusBar
                                 actions={this.state.possibleActions.filter(a => (a.slug === "preview" && this.state.config.onCompilerSuccess === "open-browser") ? false : true)}
                                 status={this.state.consoleStatus}
@@ -442,7 +449,7 @@ export default class Home extends React.Component{
                 </SplitPane>
                 :
                 <div>
-                    { !this.state.menuOpened && this.state.files.length > 0 && (!this.state.introOpen || !this.state.intro) &&
+                    { !this.state.menuOpened && this.state.possibleActions.length > 0 && (!this.state.introOpen || !this.state.intro) &&
                         <StatusBar
                             actions={this.state.possibleActions.filter(a => (a.slug === "preview" && this.state.config.onCompilerSuccess === "open-browser") ? false : true)}
                             status={this.state.consoleStatus}
