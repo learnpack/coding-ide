@@ -1,5 +1,3 @@
-/* global fetch */
-
 const urlParams = new URLSearchParams(window.location.search);
 const fullURL = location.protocol+'//'+location.hostname+(location.port ? ':'+location.port: '');
 const HOST = process.env.HOST || urlParams.get('host') || fullURL;

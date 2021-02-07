@@ -1,17 +1,16 @@
 @import '~bootstrap/scss/bootstrap.scss';
 @import '~@breathecode/ui-components/dist/main.css';
 @import 'split-pane.scss';
+@import 'colors';
 
-.editor-gitpod{
-    .btn{
-        border-radius: 0;
-        padding: 3px 5px;
-        font-size: 15px;
-    }
+.btn{
+    border-radius: 0;
+    padding: 3px 5px;
+    font-size: 15px;
 }
 body{
     font-family: Verdana, Geneva, sans-serif;
-    background: #333333;
+    background: $grey;
 }
 .bc-readme{
     height: calc(100vh - 40px);

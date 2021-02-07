@@ -2,6 +2,7 @@ const webpack = require('webpack');
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin');
+const ESLintPlugin = require('eslint-webpack-plugin');
 
 module.exports = {
   entry: [
@@ -16,7 +17,7 @@ module.exports = {
         {
           test: /\.(js|jsx)$/,
           exclude: /node_modules/,
-          use: ['babel-loader', 'eslint-loader']
+          use: ['babel-loader']
         },
         {
           test: /\.(css|scss)$/, use: [{
@@ -47,9 +48,11 @@ module.exports = {
     historyApiFallback: true
   },
   plugins: [
+    new ESLintPlugin(),
     new webpack.HotModuleReplacementPlugin(),
     new MonacoWebpackPlugin({
-      languages: ['javascript','json','html','css','scss', 'typescript']
+      languages: ['javascript','json','html','css','scss', 'typescript', 'python'],
+      features: ['!gotoSymbol']
     }),
     new HtmlWebpackPlugin({
         favicon: 'bc.ico',

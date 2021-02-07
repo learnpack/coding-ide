@@ -8,12 +8,14 @@ import StatusBar from './components/status-bar/StatusBar.js';
 import Sidebar from './components/sidebar/sidebar.js';
 import InternalError from './components/internal-error/internal-error.js';
 import SplitPane from 'react-split-pane';
+import HelpPanel from './components/help/help.js';
 import { MarkdownParser, Loading } from "@breathecode/ui-components";
 import Socket, { isPending, getStatus } from './socket';
 import { getHost, loadExercises, loadSingleExercise, loadFile, saveFile, loadReadme } from './actions.js';
 import Joyride from 'react-joyride';
 import { LearnPackError } from "./utils";
 import { Session } from 'bc-react-session';
+import TagManager from 'react-gtm-module';
 
 const actions = [
     { slug: 'build', label: 'Build', icon: 'fas fa-box-open' },
@@ -99,6 +101,7 @@ export default class Home extends React.Component{
                     // }
                 ]
             },
+            openHelpPanel: false,
             editorSocket: null,
             menuOpened: false,
             editorSize: 450,
@@ -151,6 +154,15 @@ export default class Home extends React.Component{
         if(this.state.host){
             fetch(this.state.host+'/config').then(resp => resp.json()).then(configObject => {
                     const { config } = configObject;
+
+                    // google tag manager and analytics extra information
+                    TagManager.dataLayer({ dataLayer: {
+                        slug: configObject.slug,
+                        language: configObject.language,
+                        skills: configObject.skills,
+                        grading: configObject.grading,
+                    }});
+
                     const session = Session.getSession(configObject.session || "bc-exercises");
                     if(!session.active) Session.start({ payload: { showHelp: true, currentProgress: this.state.currentProgress } }, configObject.session || "bc-exercises");
                     else if(typeof session.payload.showHelp === 'undefined') Session.setPayload({ showHelp:true, currentProgress: this.state.currentProgress });
@@ -321,8 +333,12 @@ export default class Home extends React.Component{
         };
 
         const jumpToExercise = (slug) => {
+            if(slug === "help"){
+                this.setState({ openHelpPanel: true });
+                return;
+            } 
             if(slug > this.state.currentSlug && this.state.current.graded && !this.state.current.done && this.state.config.grading === "incremental") 
-                alert("You need to finish this exercise first before you can continue");
+                alert("Test your exercise solution before you can continue to the next step");
             else window.location.hash = "#"+slug;
         };
 
@@ -335,6 +351,8 @@ export default class Home extends React.Component{
             />;
 
         if(!this.state.config) return <Loading className="centered-box" />;
+
+        if(this.state.openHelpPanel) return <HelpPanel onClose={() => this.setState({ openHelpPanel: false })} />;
         
         return <div className={`mode-${this.state.config.editor.mode}`}>
             { this.state.helpSteps[this.state.config.editor.mode] && <Joyride
@@ -367,6 +385,7 @@ export default class Home extends React.Component{
                         defaultTranslation={this.state.currentTranslation}
                         className={`editor-${this.state.config.editor.mode}`}
                         onClick={slug => jumpToExercise(slug)}
+                        onHelpClick={() => this.setState({ openHelpPanel: true })}
                         onLanguageClick={lang => loadReadme(this.state.current.slug, lang).then(readme => {
                                 const tutorial = !readme.attributes ? null : readme.attributes.tutorial || null;
                                 const intro = !readme.attributes ? null : readme.attributes.intro || null;
@@ -474,6 +493,7 @@ export default class Home extends React.Component{
                         className={`editor-${this.state.config.editor.mode}`}
                         onClick={slug => jumpToExercise(slug)}
                         onOpen={status => this.setState({ menuOpened: status })}
+                        onHelpClick={() => this.setState({ openHelpPanel: true })}
                         onLanguageClick={lang => loadReadme(this.state.current.slug, lang).then(readme => {
                                 const tutorial = !readme.attributes ? null : readme.attributes.tutorial || null;
                                 const intro = !readme.attributes ? null : readme.attributes.intro || null;

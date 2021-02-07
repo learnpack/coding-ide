@@ -1,0 +1,22 @@
+@import '../../../styles/colors';
+
+div.help{
+    background: $grey;
+    color: $white-light;
+    padding: 10px;
+    h3{
+        color: $white-light;
+    }
+    ul{
+        margin: 0px;
+        margin: 0;
+        padding: 4px 0;
+        li:hover{
+            cursor: pointer;
+            background: rgba($color: #ffffff, $alpha: 0.2);
+        }
+    }
+    .close-btn{
+        width: 100px;
+    }
+}

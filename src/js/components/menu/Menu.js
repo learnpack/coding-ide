@@ -5,6 +5,7 @@ import "./menu.scss";
 const Menu = ({ exercises, onClick, className }) => <div className={`left-menu ${className}`}>
     { exercises.length > 0 ? 
         <ul>
+            <li onClick={() => onClick({ slug: "help" })}><i className="fas fa-question-circle"></i> Help</li>
             {exercises.map(e => <li key={e.slug} onClick={() => onClick && onClick(e)}>
                 {e.done ? <i className="fas fa-check text-success"></i>
                     : <i className="fas fa-circle text-dark"></i>
