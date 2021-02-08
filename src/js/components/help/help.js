@@ -27,7 +27,7 @@ const Help = ({ onClose }) => {
             :
             <Fragment>
                 <h3>What is your question?</h3>
-                <ul>
+                <ul className="questions">
                     {questions.map(q => <li key={q.slug} onClick={() => setCurrent(q)}>{q.title}</li>)}
                     <li>
                         <a 

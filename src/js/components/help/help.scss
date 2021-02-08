@@ -2,12 +2,12 @@
 
 div.help{
     background: $grey;
-    color: $white-light;
     padding: 10px;
     h3{
         color: $white-light;
     }
-    ul{
+    ul.questions{
+        color: $white-light;
         margin: 0px;
         margin: 0;
         padding: 4px 0;
