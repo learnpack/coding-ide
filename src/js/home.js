@@ -222,9 +222,6 @@ export default class Home extends React.Component{
                         if(this.state.config.editor.mode === "standalone"){
                             loadFile(this.state.currentSlug, this.state.currentFileName)
                                 .then(content => this.setState({ currentFileContent: content, codeHasBeenChanged: false }));
-                        } 
-                        if(typeof(this.state.config) && this.state.config.onCompilerSuccess === "open-browser"){
-                            if(data.allowed.includes("preview")) window.open(this.state.host+'/preview');
                         }
                     });
                     compilerSocket.onStatus('testing-success', (data) => {

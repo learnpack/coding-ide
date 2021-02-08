@@ -51,6 +51,10 @@ export default {
             actionCallBacks: {
                 clean: function(data, s){
                     s.logs = [];
+                },
+                openWindow: function(event, s){
+                    const { data } = event;
+                    window.open(data.url || data);
                 }
             },
             statusCallBacks: {},
