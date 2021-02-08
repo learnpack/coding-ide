@@ -1,3 +1,9 @@
 $grey: #333333;
 $white: white;
 $white-light: #e0e0e0;
+$white-700: #525252;
+$white-dark: #3e3e3e;
+
+.text-white-700{
+    color: $white-700 !important;
+}

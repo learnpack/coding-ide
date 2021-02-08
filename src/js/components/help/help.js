@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import './help.scss';
 import { MarkdownParser, Loading } from "@breathecode/ui-components";
 
-const Help = ({ onClose }) => {
+const Help = ({ onClose, config }) => {
     const [ questions, setQuestions ] = React.useState([]);
     const [ current, setCurrent ] = React.useState(null);
 
@@ -16,7 +16,11 @@ const Help = ({ onClose }) => {
     return <div className="help">
         <div className="d-flex pb-2">
             <div className="w-100">
-                { current && <button className="btn btn-dark" onClick={() => setCurrent(null)}>⬅ Back to questions</button>}
+                { current ? 
+                    <button className="btn btn-dark" onClick={() => setCurrent(null)}>⬅ Back to questions</button>
+                    :
+                    <h4>Frequently Asked Questions</h4>
+                }
             </div>
             <button className="btn btn-dark close-btn" onClick={() => onClose && onClose()}>
                 Close <i className="ml-1 fas fa-times text-white"></i>
@@ -26,24 +30,22 @@ const Help = ({ onClose }) => {
             <Question slug={current.slug} /> 
             :
             <Fragment>
-                <h3>What is your question?</h3>
+                { questions.length === 0 && <Loading className="centered-box" />}
                 <ul className="questions">
                     {questions.map(q => <li key={q.slug} onClick={() => setCurrent(q)}>{q.title}</li>)}
-                    <li>
-                        <a 
-                            href="https://github.com/learnpack/learnpack/issues/new?assignees=&labels=&template=bug_report.md&title=" target="_blank" rel="noopener noreferrer"
-                            >Report a bug</a>
-                    </li>
                 </ul>
+                <div className="small text-white-700">LearnPack Editor version {config.editor ? config.editor.version : "uknown"}</div>
             </Fragment>
         }
     </div>;
 };
 Help.propTypes = {
   onClose: PropTypes.func,
+  config: PropTypes.object,
 };
 Help.defaultProps = {
-  onClose: null
+  onClose: null,
+  config: {},
 };
 export default Help;
 

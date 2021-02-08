@@ -352,7 +352,7 @@ export default class Home extends React.Component{
 
         if(!this.state.config) return <Loading className="centered-box" />;
 
-        if(this.state.openHelpPanel) return <HelpPanel onClose={() => this.setState({ openHelpPanel: false })} />;
+        if(this.state.openHelpPanel) return <HelpPanel onClose={() => this.setState({ openHelpPanel: false })} config={this.state.config} />;
         
         return <div className={`mode-${this.state.config.editor.mode}`}>
             { this.state.helpSteps[this.state.config.editor.mode] && <Joyride

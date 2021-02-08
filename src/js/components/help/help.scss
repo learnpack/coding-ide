@@ -3,17 +3,27 @@
 div.help{
     background: $grey;
     padding: 10px;
-    h3{
-        color: $white-light;
+    h4{
+        font-size: 1.2rem;
+        padding-top: 4px;
+        color: $white;
+        font-weight: 700;
     }
     ul.questions{
         color: $white-light;
         margin: 0px;
         margin: 0;
         padding: 4px 0;
-        li:hover{
-            cursor: pointer;
-            background: rgba($color: #ffffff, $alpha: 0.2);
+        li{
+            padding: 3px;
+            margin: 0px;
+            border-top: 1px solid $white-dark;
+            &:first{border-top: none;}
+            &:hover{
+                list-style: circle;
+                cursor: pointer;
+                background: rgba($color: #ffffff, $alpha: 0.2);
+            }
         }
     }
     .close-btn{
