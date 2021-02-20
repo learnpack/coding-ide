@@ -200,8 +200,9 @@ export default class Home extends React.Component{
                         const consoleStatus = {
                             code: "internal-error",
                             message: "It seems that the exercise engine is disconnected",
-                            gif: "https://github.com/breatheco-de/breathecode-cli/blob/master/docs/errors/uknown.gif?raw=true",
-                            video: "https://www.youtube.com/watch?v=gD1Sa99GiE4"
+                            solution: "Run on your terminal the command: $ learnpack start",
+                            // gif: "https://github.com/breatheco-de/breathecode-cli/blob/master/docs/errors/uknown.gif?raw=true",
+                            // video: "https://www.youtube.com/watch?v=gD1Sa99GiE4"
                         };
                         this.setState({ consoleStatus });
                     });
@@ -343,6 +344,7 @@ export default class Home extends React.Component{
             return <InternalError 
                 gif={this.state.consoleStatus.gif} 
                 message={this.state.consoleStatus.message} 
+                solution={this.state.consoleStatus.solution} 
                 repo={this.state.config ? this.state.config.repository : null} 
                 video={this.state.consoleStatus.video} 
             />;

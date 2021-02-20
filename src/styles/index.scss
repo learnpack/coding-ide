@@ -59,6 +59,7 @@ body{
     width: 100%;
 }
 
+.bg-black{ background-color: #0e0e0e;}
 .glow{ animation: glow 1s ease-in-out infinite alternate; }
 .status-bar.ready .status{ animation: glow 1s ease-in-out infinite alternate; }
 @-webkit-keyframes glow {
