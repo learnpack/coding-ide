@@ -48,13 +48,18 @@ export default {
         const scope = {
             socket: this.socket,
             name: scopeName,
+            previewWindow: null,
             actionCallBacks: {
                 clean: function(data, s){
                     s.logs = [];
                 },
                 openWindow: function(event, s){
                     const { data } = event;
-                    window.open(data.url || data);
+                    if(this.previewWindow){
+                        this.previewWindow.close();
+                        this.previewWindow = null;
+                    }
+                    this.previewWindow = window.open(data.url || data);
                 }
             },
             statusCallBacks: {},
