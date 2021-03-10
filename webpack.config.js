@@ -55,7 +55,7 @@ module.exports = {
       features: ['!gotoSymbol']
     }),
     new HtmlWebpackPlugin({
-        favicon: 'bc.ico',
+        favicon: 'icon.ico',
         template: 'template.html'
     })
   ]

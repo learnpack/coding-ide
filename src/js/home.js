@@ -294,7 +294,11 @@ export default class Home extends React.Component{
                 const tutorial = !readme.attributes ? null : readme.attributes.tutorial || null;
                 const intro = !readme.attributes ? null : readme.attributes.intro || null;
                 const _readme = readme.body || readme;
-                this.setState({ currentInstructions: _readme, tutorial, intro });
+
+                let possibleActions = this.state.possibleActions;
+                if(tutorial) possibleActions = possibleActions.concat({ slug: 'tutorial', label: 'Tutorial', icon: 'fas fa-graduation-cap' });
+
+                this.setState({ currentInstructions: _readme, tutorial, intro, possibleActions });
             });
         }
     }
@@ -352,6 +356,7 @@ export default class Home extends React.Component{
         if(!this.state.config) return <Loading className="centered-box" />;
 
         if(this.state.openHelpPanel) return <HelpPanel onClose={() => this.setState({ openHelpPanel: false })} config={this.state.config} />;
+
         
         return <div className={`mode-${this.state.config.editor.mode}`}>
             { this.state.helpSteps[this.state.config.editor.mode] && <Joyride
