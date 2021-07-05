@@ -4,9 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "gitpod": "webpack-dev-server --mode development --open --port 3000",
     "start": "webpack-dev-server --mode development --hot",
     "build": "webpack --mode production",
+    "build-dev": "webpack --mode development",
     "compress": "node targify.js",
     "deploy": "node deploy-to-github.js"
   },

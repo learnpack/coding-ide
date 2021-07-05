@@ -13,7 +13,7 @@ import { MarkdownParser, Loading } from "@breathecode/ui-components";
 import Socket, { isPending, getStatus } from './socket';
 import { getHost, loadExercises, loadSingleExercise, loadFile, saveFile, loadReadme } from './actions.js';
 import Joyride from 'react-joyride';
-import { LearnPackError } from "./utils";
+import { LearnPackError, deepMerge, getParams } from "./utils";
 import { Session } from 'bc-react-session';
 import TagManager from 'react-gtm-module';
 
@@ -66,7 +66,7 @@ export default class Home extends React.Component{
                     //     placement: 'center'
                     // }
                 ],
-                gitpod: [
+                preview: [
                     {
                         target: 'body',
                         content: <span><h4>1) Read!</h4>Every exercise will come with a brief introduction and some instructions on how to complete it.</span>,
@@ -76,7 +76,7 @@ export default class Home extends React.Component{
                     {
                         target: 'body',
                         placement: 'center',
-                        content: <span><h4>2) Code!</h4>Use the gitpod ide on the left of the screen to code and propose a solution.</span>,
+                        content: <span><h4>2) Code!</h4>Use the coding editor on the left of the screen to code and propose a solution.</span>,
                         disableBeacon: true
                     },
                     {
@@ -153,7 +153,10 @@ export default class Home extends React.Component{
     componentDidMount(){
         if(this.state.host){
             fetch(this.state.host+'/config').then(resp => resp.json()).then(configObject => {
-                    const { config } = configObject;
+                    let urlConfig = getParams("config");
+                    if(urlConfig) urlConfig = JSON.parse(atob(urlConfig));
+
+                    let config = deepMerge(configObject, urlConfig);
 
                     // google tag manager and analytics extra information
                     TagManager.dataLayer({ dataLayer: {
@@ -280,7 +283,7 @@ export default class Home extends React.Component{
                             currentFileExtension: files[0].name.split('.').pop()
                         }));
 
-                        if(this.state.config.editor.mode === 'gitpod' && this.state.config.grading === 'isolated') this.state.compilerSocket.emit("gitpod-open", { 
+                        if(this.state.config.grading === 'isolated') this.state.compilerSocket.emit("open", { 
                             exerciseSlug: this.state.currentSlug, 
                             files: files.map(f => f.path)
                         });
@@ -347,6 +350,7 @@ export default class Home extends React.Component{
         if (this.state.consoleStatus && this.state.consoleStatus.code === "internal-error") 
             return <InternalError 
                 gif={this.state.consoleStatus.gif} 
+                config={this.state.config}
                 message={this.state.consoleStatus.message} 
                 solution={this.state.consoleStatus.solution} 
                 repo={this.state.config ? this.state.config.repository : null} 
