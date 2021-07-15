@@ -15,7 +15,7 @@ export default class Sidebar extends React.Component {
         };
     }
     render() {
-        const { className, children, current, next, previous, disabled, onClick, onLanguageClick, onHelpClick, exercises, onOpen, defaultTranslation } = this.props;
+        const { className, children, current, next, previous, disabled, onClick, onBugClick, onLanguageClick, onHelpClick, exercises, onOpen, defaultTranslation } = this.props;
 
         return (<div className={className}>
             <div className={`prev-next-bar`}>
@@ -30,12 +30,12 @@ export default class Sidebar extends React.Component {
                         onLanguageClick && onLanguageClick(lang);
                     }}
                 />
-                <a href="https://github.com/learnpack/learnpack/issues/new?assignees=&labels=&template=bug_report.md&title=" className="bug btn" target="_blank" rel="noopener noreferrer" data-toggle="tooltip" data-placement="top" title="Report a Bug">
+                <a href="#" onClick={() => onBugClick && onBugClick()} className="bug btn" target="_blank" rel="noopener noreferrer" data-toggle="tooltip" data-placement="top" title="Report a Bug">
                     <Icon type="bug" size="15px" className="white ml-1" />
                     <small className="hint">Report a bug</small>
                 </a>
                 <a href="#" className="bug btn" onClick={() => onHelpClick && onHelpClick()} title="Help">
-                    <Icon type="help" size="15px" className="white ml-1" />
+                    <Icon type="question" size="15px" className="white ml-1" />
                     <small className="hint">Get help</small>
                 </a>
                 {next &&
@@ -73,6 +73,7 @@ Sidebar.propTypes = {
     children: PropTypes.node,
     disabled: PropTypes.bool,
     onLanguageClick: PropTypes.func,
+    onBugClick: PropTypes.func,
     onHelpClick: PropTypes.func,
     onClick: PropTypes.func,
     onOpen: PropTypes.func,
@@ -87,6 +88,7 @@ Sidebar.defaultProps = {
     disabled: false,
     onOpen: null,
     onLanguageClick: null,
+    onBugClick: null,
     onHelpClick: null,
     onClick: null,
     exercises: []

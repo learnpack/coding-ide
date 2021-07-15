@@ -305,6 +305,19 @@ export default class Home extends React.Component{
             });
         }
     }
+
+    openWindow(url){
+        if(!['gitpod', 'vscode'].includes(this.state.config.editor.agent)){
+            window.open(url);
+        }
+        else{
+            this.state.compilerSocket.openWindow({
+                url,
+                exerciseSlug: this.state.currentSlug
+            });
+        }
+    }
+
     render(){
         let { showHelp } = Session.getPayload();
         
@@ -402,6 +415,7 @@ export default class Home extends React.Component{
                                 this.setState({ currentInstructions: _readme, tutorial, intro, currentTranslation: lang });
                             })
                         }
+                        onBugClick={() => this.openWindow(`https://github.com/learnpack/learnpack/issues/new?assignees=&labels=&template=bug_report.md&title=`)}
                         onOpen={status => this.setState({ menuOpened: status })}
                     >
                         { !this.state.menuOpened && this.state.possibleActions.length > 0 && (!this.state.introOpen || !this.state.intro) &&
@@ -412,11 +426,8 @@ export default class Home extends React.Component{
                                 disabled={isPending(this.state.consoleStatus)}
                                 onAction={(a) => {
                                     if(a.confirm !== true || window.confirm("Are you sure?")){
-                                        if(a.slug === 'preview') window.open(this.state.host+'/preview');
-                                        else if(a.slug === 'tutorial') this.state.compilerSocket.openWindow({
-                                            url: this.state.tutorial,
-                                            exerciseSlug: this.state.currentSlug
-                                        });
+                                        if(a.slug === 'preview') this.openWindow(this.state.host+'/preview');
+                                        else if(a.slug === 'tutorial') this.openWindow(this.state.tutorial);
                                         else this.state.compilerSocket.emit(a.slug, { exerciseSlug: this.state.currentSlug });
                                     }
                                 }}
@@ -463,8 +474,9 @@ export default class Home extends React.Component{
                                     logs={this.state.consoleLogs}
                                     onAction={(a) => {
                                         if(a.confirm !== true || window.confirm("Are you sure?")){
-                                            if(a.slug === 'preview') window.open(this.state.host+'/preview');
+                                            if(a.slug === 'preview') this.openWindow(this.state.host+'/preview');
                                             else this.state.compilerSocket.emit(a.slug, { exerciseSlug: this.state.currentSlug });
+                                            
                                             if(a.slug === 'reset'){
                                                 loadFile(this.state.currentSlug, this.state.currentFileName)
                                                     .then(content => this.setState({ currentFileContent: content, codeHasBeenChanged: false }));
@@ -488,8 +500,8 @@ export default class Home extends React.Component{
                             disabled={isPending(this.state.consoleStatus)}
                             onAction={(a) => {
                                 if(a.confirm !== true || window.confirm("Are you sure?")){
-                                    if(a.slug === 'preview') window.open(this.state.host+'/preview');
-                                    else if(a.slug === 'tutorial') window.open(this.state.tutorial);
+                                    if(a.slug === 'preview') this.openWindow(this.state.host+'/preview');
+                                    else if(a.slug === 'tutorial') this.openWindow(this.state.tutorial);
                                     else this.state.compilerSocket.emit(a.slug, { exerciseSlug: this.state.currentSlug });
                                 }
                             }}
@@ -506,6 +518,10 @@ export default class Home extends React.Component{
                         onClick={slug => jumpToExercise(slug)}
                         onOpen={status => this.setState({ menuOpened: status })}
                         onHelpClick={() => this.setState({ openHelpPanel: true })}
+
+                        
+
+                        onBugClick={() => this.state.compilerSocket.openWindow(`https://github.com/learnpack/learnpack/issues/new?assignees=&labels=&template=bug_report.md&title=`)}
                         onLanguageClick={lang => loadReadme(this.state.current.slug, lang).then(readme => {
                                 const tutorial = !readme.attributes ? null : readme.attributes.tutorial || null;
                                 const intro = !readme.attributes ? null : readme.attributes.intro || null;

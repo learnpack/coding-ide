@@ -53,14 +53,6 @@ export default {
                 clean: function(data, s){
                     s.logs = [];
                 },
-                openWindow: function(event, s){
-                    const { data } = event;
-                    if(this.previewWindow){
-                        this.previewWindow.close();
-                        this.previewWindow = null;
-                    }
-                    this.previewWindow = window.open(data.url || data);
-                }
             },
             statusCallBacks: {},
             updatedCallback: null,
