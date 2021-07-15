@@ -521,7 +521,7 @@ export default class Home extends React.Component{
 
                         
 
-                        onBugClick={() => this.state.compilerSocket.openWindow(`https://github.com/learnpack/learnpack/issues/new?assignees=&labels=&template=bug_report.md&title=`)}
+                        onBugClick={() => this.openWindow(`https://github.com/learnpack/learnpack/issues/new?assignees=&labels=&template=bug_report.md&title=`)}
                         onLanguageClick={lang => loadReadme(this.state.current.slug, lang).then(readme => {
                                 const tutorial = !readme.attributes ? null : readme.attributes.tutorial || null;
                                 const intro = !readme.attributes ? null : readme.attributes.intro || null;
