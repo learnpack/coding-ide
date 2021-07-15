@@ -35,7 +35,7 @@ export const getStatus = function(status='initializing'){
 
 export const isPending = (status) => (status) ? (['initializing', 'compiling', 'testing', 'pending', 'conecting','internal-error' ].indexOf(status.code || status) > 0) : true;
 
-const actions = ['build','prettify', 'test', 'run', 'input', 'open', 'preview', 'reset', 'reload'];
+const actions = ['build','prettify', 'test', 'run', 'input', 'open', 'preview', 'reset', 'reload', 'open_window'];
 
 export default {
     socket: null,
@@ -74,6 +74,9 @@ export default {
             },
             onStatus: function(status, callBack){
                 this.statusCallBacks[status] = callBack;
+            },
+            openWindow: function(data){
+                this.emit('open_window', data);
             },
             emit: function(action, data){
                 if(actions.indexOf(action) < 0) throw new Error('Invalid action "'+action+'" for socket connection');

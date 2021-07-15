@@ -156,7 +156,7 @@ export default class Home extends React.Component{
                     let urlConfig = getParams("config");
                     if(urlConfig) urlConfig = JSON.parse(atob(urlConfig));
 
-                    let config = deepMerge(configObject, urlConfig);
+                    configObject = Object.assign(configObject, { config: deepMerge(configObject.config, urlConfig) });
 
                     // google tag manager and analytics extra information
                     TagManager.dataLayer({ dataLayer: {
@@ -247,7 +247,7 @@ export default class Home extends React.Component{
                         console.log("Reloading...", data);
                         window.location.reload();
                     });
-                    this.setState({ compilerSocket, config });
+                    this.setState({ compilerSocket, config: configObject.config });
             })
             .catch(error => {
                 console.error(error);
@@ -361,7 +361,8 @@ export default class Home extends React.Component{
 
         if(this.state.openHelpPanel) return <HelpPanel onClose={() => this.setState({ openHelpPanel: false })} config={this.state.config} />;
 
-        
+        if(this.state.config.editor === undefined) return null;
+
         return <div className={`mode-${this.state.config.editor.mode}`}>
             { this.state.helpSteps[this.state.config.editor.mode] && <Joyride
                     steps={this.state.helpSteps[this.state.config.editor.mode]}
@@ -412,7 +413,10 @@ export default class Home extends React.Component{
                                 onAction={(a) => {
                                     if(a.confirm !== true || window.confirm("Are you sure?")){
                                         if(a.slug === 'preview') window.open(this.state.host+'/preview');
-                                        else if(a.slug === 'tutorial') window.open(this.state.tutorial);
+                                        else if(a.slug === 'tutorial') this.state.compilerSocket.openWindow({
+                                            url: this.state.tutorial,
+                                            exerciseSlug: this.state.currentSlug
+                                        });
                                         else this.state.compilerSocket.emit(a.slug, { exerciseSlug: this.state.currentSlug });
                                     }
                                 }}
