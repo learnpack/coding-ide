@@ -1,44 +1,39 @@
 /* eslint-disable */
-import React, { useState, useImperativeHandle } from "react";
+import React, { useState, useEffect } from "react";
+import { render, unmountComponentAtNode } from "react-dom";
 
 const WINDOW_TYPE = {
   CONFIRM: "confirm",
   ALERT: "alert",
 };
 
-var __alert_promotion;
-
-const Alert = React.forwardRef(({ onAccept }, ref) => {
+const Alert = ({ title, onAccept, onCancel, type }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [type, setType] = useState("");
-  const [text, setText] = useState("");
 
-  useImperativeHandle(ref, () => ({
-    confirm: (text) => {
-      setType(WINDOW_TYPE.CONFIRM);
-      setText(text);
-      setIsOpen(true);
-
-      return new Promise((resolve) => {
-        __alert_promotion = resolve;
-      });
-    },
-  }));
-
-  const onCancel = () => {
+  const close = () => {
     setIsOpen(false);
-    if (__alert_promotion) __alert_promotion(false);
+    removeElement();
+  };
+
+  const onCancelClick = () => {
+    close();
+    onCancel && onCancel();
   };
 
   const onAcceptClick = () => {
-    setIsOpen(false);
-    if (__alert_promotion) __alert_promotion(true);
+    close();
     onAccept && onAccept();
   };
 
+  useEffect(() => {
+    setIsOpen(true);
+  }, []);
+
+  console.log("Opened", isOpen);
+
   return (
     <div
-      className={`modal fade ${isOpen && "show"}`}
+      className={`modal fade ${isOpen ? "show" : "show"}`}
       tabIndex="-1"
       role="dialog"
       style={{
@@ -48,7 +43,7 @@ const Alert = React.forwardRef(({ onAccept }, ref) => {
       <div className="modal-dialog" role="document">
         <div className="modal-content">
           <div className="modal-body">
-            <p>{text}</p>
+            <p>{title}</p>
           </div>
 
           <div className="modal-footer">
@@ -57,7 +52,7 @@ const Alert = React.forwardRef(({ onAccept }, ref) => {
                 type="button"
                 className="btn btn-secondary"
                 data-dismiss="modal"
-                onClick={onCancel}
+                onClick={onCancelClick}
               >
                 Cancel
               </button>
@@ -74,6 +69,40 @@ const Alert = React.forwardRef(({ onAccept }, ref) => {
       </div>
     </div>
   );
-});
+};
+
+const createElement = ({ title, onAccept, onCancel, type }) => {
+  let target = document.getElementById("alert-window");
+
+  if (!target) {
+    target = document.createElement("div");
+    target.id = "alert-window";
+    document.body.appendChild(target);
+  }
+
+  console.log(target);
+
+  render(
+    <Alert title={title} onAccept={onAccept} onCancel={onCancel} type={type} />,
+    target
+  );
+};
+
+const removeElement = () => {
+  const target = document.getElementById("alert-window");
+  if (target) {
+    unmountComponentAtNode(target);
+    target.parentNode.removeChild(target);
+  }
+};
+
+export const confirm = ({ title, onAccept, onCancel }) => {
+  createElement({
+    title,
+    onAccept,
+    onCancel,
+    type: WINDOW_TYPE.CONFIRM,
+  });
+};
 
 export default Alert;
