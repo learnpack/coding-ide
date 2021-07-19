@@ -29,8 +29,6 @@ const Alert = ({ title, onAccept, onCancel, type }) => {
     setIsOpen(true);
   }, []);
 
-  console.log("Opened", isOpen);
-
   return (
     <div
       className={`modal fade ${isOpen ? "show" : "show"}`}
@@ -80,8 +78,6 @@ const createElement = ({ title, onAccept, onCancel, type }) => {
     document.body.appendChild(target);
   }
 
-  console.log(target);
-
   render(
     <Alert title={title} onAccept={onAccept} onCancel={onCancel} type={type} />,
     target
@@ -102,6 +98,12 @@ export const confirm = ({ title, onAccept, onCancel }) => {
     onAccept,
     onCancel,
     type: WINDOW_TYPE.CONFIRM,
+  });
+};
+
+export const alert = (title) => {
+  createElement({
+    title
   });
 };
 
