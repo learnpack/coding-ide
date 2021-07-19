@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { createRef } from 'react';
 import logo from '../img/breathecode.png';
 import Editor from './components/editor/Editor.js';
 import Terminal from './components/terminal/Terminal.js';
@@ -9,6 +9,7 @@ import Sidebar from './components/sidebar/sidebar.js';
 import InternalError from './components/internal-error/internal-error.js';
 import SplitPane from 'react-split-pane';
 import HelpPanel from './components/help/help.js';
+import Alert from './components/alerts/alert';
 import { MarkdownParser, Loading } from "@breathecode/ui-components";
 import Socket, { isPending, getStatus } from './socket';
 import { getHost, loadExercises, loadSingleExercise, loadFile, saveFile, loadReadme } from './actions.js';
@@ -149,6 +150,7 @@ export default class Home extends React.Component{
                 else return null;
             }
         };
+        this.confirmModal = createRef();
     }
     componentDidMount(){
         if(this.state.host){
@@ -425,7 +427,7 @@ export default class Home extends React.Component{
                                 exercises={this.state.exercises}
                                 disabled={isPending(this.state.consoleStatus)}
                                 onAction={(a) => {
-                                    if(a.confirm !== true || window.confirm("Are you sure?")){
+                                    if(a.confirm !== true || this.confirmModal.current.confirm("Are you sure?")){
                                         if(a.slug === 'preview') this.openWindow(this.state.host+'/preview');
                                         else if(a.slug === 'tutorial') this.openWindow(this.state.tutorial);
                                         else this.state.compilerSocket.emit(a.slug, { exerciseSlug: this.state.currentSlug });
@@ -473,7 +475,7 @@ export default class Home extends React.Component{
                                     status={this.state.isSaving ? { code: 'saving', message: getStatus('saving') } : this.state.consoleStatus}
                                     logs={this.state.consoleLogs}
                                     onAction={(a) => {
-                                        if(a.confirm !== true || window.confirm("Are you sure?")){
+                                        if(a.confirm !== true || this.confirmModal.current.confirm("Are you sure?")){
                                             if(a.slug === 'preview') this.openWindow(this.state.host+'/preview');
                                             else this.state.compilerSocket.emit(a.slug, { exerciseSlug: this.state.currentSlug });
                                             
@@ -499,10 +501,20 @@ export default class Home extends React.Component{
                             exercises={this.state.exercises}
                             disabled={isPending(this.state.consoleStatus)}
                             onAction={(a) => {
-                                if(a.confirm !== true || window.confirm("Are you sure?")){
+                                const operations = () => {
                                     if(a.slug === 'preview') this.openWindow(this.state.host+'/preview');
                                     else if(a.slug === 'tutorial') this.openWindow(this.state.tutorial);
                                     else this.state.compilerSocket.emit(a.slug, { exerciseSlug: this.state.currentSlug });
+                                };
+
+                                if(a.confirm !== true){
+                                    operations();
+                                } else {
+                                    this.confirmModal.current.confirm("Are you sure?").then((answer) => {
+                                        if (answer) {
+                                            operations();
+                                        }
+                                    });
                                 }
                             }}
                         />
@@ -538,6 +550,8 @@ export default class Home extends React.Component{
                     </Sidebar>
                 </div>
             }
+
+            <Alert ref={this.confirmModal} />
         </div>;
     }
 }
