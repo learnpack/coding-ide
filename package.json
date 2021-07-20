@@ -53,6 +53,7 @@
   "dependencies": {
     "@breathecode/ui-components": "^1.1.78",
     "ansi-to-react": "^3.3.5",
+    "babel-polyfill": "^6.26.0",
     "bc-react-session": "^1.5.16",
     "bootstrap": "^4.6.0",
     "events": "^1.1.1",
