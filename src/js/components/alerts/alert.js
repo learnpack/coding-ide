@@ -1,5 +1,5 @@
 /* eslint-disable */
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { render, unmountComponentAtNode } from "react-dom";
 
 const WINDOW_TYPE = {
@@ -11,6 +11,9 @@ const WINDOW_TYPE = {
 const Alert = ({ title, onAccept, onCancel, type }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [value, setValue] = useState("");
+
+  const buttonRef = useRef();
+  const inputRef = useRef();
 
   const close = () => {
     setIsOpen(false);
@@ -27,8 +30,31 @@ const Alert = ({ title, onAccept, onCancel, type }) => {
     onAccept && onAccept(type === WINDOW_TYPE.PROMPT ? value : true);
   };
 
+  const onKeyPress = (e) => {
+    if (e.keyCode === 27) {
+      onCancelClick();
+    } else {
+      if (e.keyCode === 13) {
+        onAcceptClick();
+      }
+    }
+  };
+
   useEffect(() => {
     setIsOpen(true);
+    document.addEventListener("keydown", onKeyPress);
+
+    setTimeout(() => {
+      if (type === WINDOW_TYPE.PROMPT) {
+        inputRef.current.focus();
+      } else {
+        buttonRef.current.focus();
+      }
+    }, 50);
+
+    return () => {
+      document.removeEventListener("keydown", onKeyPress);
+    };
   }, []);
 
   return (
@@ -49,6 +75,7 @@ const Alert = ({ title, onAccept, onCancel, type }) => {
               <input
                 className="form-control"
                 onChange={({ target }) => setValue(target.value)}
+                ref={inputRef}
               />
             )}
           </div>
@@ -68,6 +95,7 @@ const Alert = ({ title, onAccept, onCancel, type }) => {
               type="button"
               className="btn btn-primary"
               onClick={onAcceptClick}
+              ref={buttonRef}
             >
               Accept
             </button>
