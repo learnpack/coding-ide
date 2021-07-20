@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { createRef } from 'react';
 import logo from '../img/breathecode.png';
 import Editor from './components/editor/Editor.js';
 import Terminal from './components/terminal/Terminal.js';
@@ -9,6 +9,7 @@ import Sidebar from './components/sidebar/sidebar.js';
 import InternalError from './components/internal-error/internal-error.js';
 import SplitPane from 'react-split-pane';
 import HelpPanel from './components/help/help.js';
+import { confirm, alert } from './components/alerts/alert';
 import { MarkdownParser, Loading } from "@breathecode/ui-components";
 import Socket, { isPending, getStatus } from './socket';
 import { getHost, loadExercises, loadSingleExercise, loadFile, saveFile, loadReadme } from './actions.js';
@@ -256,6 +257,22 @@ export default class Home extends React.Component{
         }
     }
 
+    resetOrPreview(a, source) {
+        if (source === "statusbar") {
+            if(a.slug === 'preview') this.openWindow(this.state.host+'/preview');
+            else if(a.slug === 'tutorial') this.openWindow(this.state.tutorial);
+            else this.state.compilerSocket.emit(a.slug, { exerciseSlug: this.state.currentSlug });
+        }else{
+            if(a.slug === 'preview') this.openWindow(this.state.host+'/preview');
+            else this.state.compilerSocket.emit(a.slug, { exerciseSlug: this.state.currentSlug });
+            
+            if(a.slug === 'reset'){
+                loadFile(this.state.currentSlug, this.state.currentFileName)
+                    .then(content => this.setState({ currentFileContent: content, codeHasBeenChanged: false }));
+            }
+        }   
+    }
+
     loadInstructions(slug=null){
         if(!slug) slug = window.location.hash.slice(1,window.location.hash.length);
         if(slug=='' || slug=='/'){
@@ -425,10 +442,15 @@ export default class Home extends React.Component{
                                 exercises={this.state.exercises}
                                 disabled={isPending(this.state.consoleStatus)}
                                 onAction={(a) => {
-                                    if(a.confirm !== true || window.confirm("Are you sure?")){
-                                        if(a.slug === 'preview') this.openWindow(this.state.host+'/preview');
-                                        else if(a.slug === 'tutorial') this.openWindow(this.state.tutorial);
-                                        else this.state.compilerSocket.emit(a.slug, { exerciseSlug: this.state.currentSlug });
+                                    if(a.confirm !== true){
+                                        this.resetOrPreview(a);
+                                    } else {
+                                        confirm({
+                                            title: "Are you sure?",
+                                            onAccept: () => {
+                                                this.resetOrPreview(a);
+                                            }
+                                        });
                                     }
                                 }}
                             />
@@ -473,14 +495,15 @@ export default class Home extends React.Component{
                                     status={this.state.isSaving ? { code: 'saving', message: getStatus('saving') } : this.state.consoleStatus}
                                     logs={this.state.consoleLogs}
                                     onAction={(a) => {
-                                        if(a.confirm !== true || window.confirm("Are you sure?")){
-                                            if(a.slug === 'preview') this.openWindow(this.state.host+'/preview');
-                                            else this.state.compilerSocket.emit(a.slug, { exerciseSlug: this.state.currentSlug });
-                                            
-                                            if(a.slug === 'reset'){
-                                                loadFile(this.state.currentSlug, this.state.currentFileName)
-                                                    .then(content => this.setState({ currentFileContent: content, codeHasBeenChanged: false }));
-                                            }
+                                        if(a.confirm !== true){
+                                            this.resetOrPreview(a, "terminal");
+                                        } else {
+                                            confirm({
+                                                title: "Are you sure?",
+                                                onAccept: () => {
+                                                    this.resetOrPreview(a, "terminal");
+                                                }
+                                            });
                                         }
                                     }}
                                     height={window.innerHeight - this.state.editorSize}
@@ -499,10 +522,15 @@ export default class Home extends React.Component{
                             exercises={this.state.exercises}
                             disabled={isPending(this.state.consoleStatus)}
                             onAction={(a) => {
-                                if(a.confirm !== true || window.confirm("Are you sure?")){
-                                    if(a.slug === 'preview') this.openWindow(this.state.host+'/preview');
-                                    else if(a.slug === 'tutorial') this.openWindow(this.state.tutorial);
-                                    else this.state.compilerSocket.emit(a.slug, { exerciseSlug: this.state.currentSlug });
+                                if(a.confirm !== true){
+                                    this.resetOrPreview(a, "statusbar");
+                                } else {
+                                    confirm({
+                                        title: "Are you sure?",
+                                        onAccept: () => {
+                                            this.resetOrPreview(a, "statusbar");
+                                        }
+                                    });
                                 }
                             }}
                         />
