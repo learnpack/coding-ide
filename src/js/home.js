@@ -9,7 +9,7 @@ import Sidebar from './components/sidebar/sidebar.js';
 import InternalError from './components/internal-error/internal-error.js';
 import SplitPane from 'react-split-pane';
 import HelpPanel from './components/help/help.js';
-import { confirm, alert } from './components/alerts/alert';
+import { confirm, alert, prompt } from './components/alerts/alert';
 import { MarkdownParser, Loading } from "@breathecode/ui-components";
 import Socket, { isPending, getStatus } from './socket';
 import { getHost, loadExercises, loadSingleExercise, loadFile, saveFile, loadReadme } from './actions.js';
@@ -188,7 +188,7 @@ export default class Home extends React.Component{
                                     this.loadInstructions(_savedSlug);
                                 }
                                 else this.loadInstructions(exercises[0].slug);
-                            } 
+                            }
                         })
                         .catch(error => {
                             this.setState({ error: error.details || "There was an error loading the excercise list from "+this.state.host });
@@ -238,9 +238,15 @@ export default class Home extends React.Component{
                             current: Object.assign(this.state.current, { done: true })
                         });
                     });
-                    compilerSocket.on("ask", ({ inputs }) => {
+                    compilerSocket.on("ask", async ({ inputs }) => {
+                        const inputsResponses = [];
+
+                        for (let i = 0; i < inputs.length; i++) {
+                            inputsResponses.push(await prompt(inputs[i] || `Please enter the ${i+1} input`));
+                        }
+                        
                         compilerSocket.emit('input', {
-                            inputs: inputs.map((question,i) => prompt(question || `Please enter the ${i+1} input`)),
+                            inputs: inputsResponses,
                             exerciseSlug: this.state.currentSlug
                         });
                     });
@@ -337,7 +343,7 @@ export default class Home extends React.Component{
 
     render(){
         let { showHelp } = Session.getPayload();
-        
+
         //close the help if there is a video open right now
         if(this.state.introOpen && this.state.intro) showHelp = false;
 
@@ -441,16 +447,14 @@ export default class Home extends React.Component{
                                 status={this.state.consoleStatus}
                                 exercises={this.state.exercises}
                                 disabled={isPending(this.state.consoleStatus)}
-                                onAction={(a) => {
+                                onAction={async (a) => {
                                     if(a.confirm !== true){
                                         this.resetOrPreview(a);
                                     } else {
-                                        confirm({
-                                            title: "Are you sure?",
-                                            onAccept: () => {
-                                                this.resetOrPreview(a);
-                                            }
-                                        });
+                                        if (await confirm("Are you sure?")) {
+                                            this.resetOrPreview(a, "statusbar");
+                                        }
+                                        
                                     }
                                 }}
                             />
@@ -494,16 +498,13 @@ export default class Home extends React.Component{
                                     host={this.state.host}
                                     status={this.state.isSaving ? { code: 'saving', message: getStatus('saving') } : this.state.consoleStatus}
                                     logs={this.state.consoleLogs}
-                                    onAction={(a) => {
+                                    onAction={async (a) => {
                                         if(a.confirm !== true){
                                             this.resetOrPreview(a, "terminal");
                                         } else {
-                                            confirm({
-                                                title: "Are you sure?",
-                                                onAccept: () => {
-                                                    this.resetOrPreview(a, "terminal");
-                                                }
-                                            });
+                                            if (await confirm("Are you sure?")) {
+                                                this.resetOrPreview(a, "terminal");
+                                            }
                                         }
                                     }}
                                     height={window.innerHeight - this.state.editorSize}
@@ -521,16 +522,13 @@ export default class Home extends React.Component{
                             status={this.state.consoleStatus}
                             exercises={this.state.exercises}
                             disabled={isPending(this.state.consoleStatus)}
-                            onAction={(a) => {
+                            onAction={async (a) => {
                                 if(a.confirm !== true){
                                     this.resetOrPreview(a, "statusbar");
                                 } else {
-                                    confirm({
-                                        title: "Are you sure?",
-                                        onAccept: () => {
-                                            this.resetOrPreview(a, "statusbar");
-                                        }
-                                    });
+                                    if (await confirm("Are you sure?")) {
+                                        this.resetOrPreview(a, "statusbar");
+                                    }
                                 }
                             }}
                         />

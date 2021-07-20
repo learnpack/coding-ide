@@ -1,14 +1,19 @@
 /* eslint-disable */
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { render, unmountComponentAtNode } from "react-dom";
 
 const WINDOW_TYPE = {
   CONFIRM: "confirm",
   ALERT: "alert",
+  PROMPT: "prompt",
 };
 
 const Alert = ({ title, onAccept, onCancel, type }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [value, setValue] = useState("");
+
+  const buttonRef = useRef();
+  const inputRef = useRef();
 
   const close = () => {
     setIsOpen(false);
@@ -17,16 +22,39 @@ const Alert = ({ title, onAccept, onCancel, type }) => {
 
   const onCancelClick = () => {
     close();
-    onCancel && onCancel();
+    onCancel && onCancel(false);
   };
 
   const onAcceptClick = () => {
     close();
-    onAccept && onAccept();
+    onAccept && onAccept(type === WINDOW_TYPE.PROMPT ? value : true);
+  };
+
+  const onKeyPress = (e) => {
+    if (e.keyCode === 27) {
+      onCancelClick();
+    } else {
+      if (e.keyCode === 13) {
+        onAcceptClick();
+      }
+    }
   };
 
   useEffect(() => {
     setIsOpen(true);
+    document.addEventListener("keydown", onKeyPress);
+
+    setTimeout(() => {
+      if (type === WINDOW_TYPE.PROMPT) {
+        inputRef.current.focus();
+      } else {
+        buttonRef.current.focus();
+      }
+    }, 50);
+
+    return () => {
+      document.removeEventListener("keydown", onKeyPress);
+    };
   }, []);
 
   return (
@@ -42,10 +70,18 @@ const Alert = ({ title, onAccept, onCancel, type }) => {
         <div className="modal-content">
           <div className="modal-body">
             <p>{title}</p>
+
+            {type === WINDOW_TYPE.PROMPT && (
+              <input
+                className="form-control"
+                onChange={({ target }) => setValue(target.value)}
+                ref={inputRef}
+              />
+            )}
           </div>
 
           <div className="modal-footer">
-            {type === WINDOW_TYPE.CONFIRM && (
+            {(type === WINDOW_TYPE.CONFIRM || type === WINDOW_TYPE.PROMPT) && (
               <button
                 type="button"
                 className="btn btn-secondary"
@@ -59,6 +95,7 @@ const Alert = ({ title, onAccept, onCancel, type }) => {
               type="button"
               className="btn btn-primary"
               onClick={onAcceptClick}
+              ref={buttonRef}
             >
               Accept
             </button>
@@ -92,18 +129,39 @@ const removeElement = () => {
   }
 };
 
-export const confirm = ({ title, onAccept, onCancel }) => {
-  createElement({
-    title,
-    onAccept,
-    onCancel,
-    type: WINDOW_TYPE.CONFIRM,
+export const confirm = (title) => {
+  return new Promise((resolve) => {
+    createElement({
+      title,
+      onAccept: resolve,
+      onCancel: resolve,
+      type: WINDOW_TYPE.CONFIRM,
+    });
   });
 };
 
 export const alert = (title) => {
-  createElement({
-    title
+  return new Promise((resolve) => {
+    createElement({
+      title,
+      onAccept: resolve,
+      type: WINDOW_TYPE.ALERT,
+    });
+  });
+};
+
+export const prompt = (title) => {
+  return new Promise((resolve) => {
+    createElement({
+      title,
+      onAccept: (data) => {
+        // workaround to avoid to show multiples prompts too fast
+        setTimeout(() => {
+          resolve(data);
+        }, 200);
+      },
+      type: WINDOW_TYPE.PROMPT,
+    });
   });
 };
 
