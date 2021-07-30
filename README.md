@@ -15,6 +15,8 @@ Before you can run this project, you have to make sure you also have the learnpa
 http://localhost:8080/?host=http://localhost:3000
 ```
 
+Note: make sure there is not `/` at the end of the URL.
+
 
 ## How to publish this package:
 
