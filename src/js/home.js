@@ -438,7 +438,7 @@ export default class Home extends React.Component{
                                 this.setState({ currentInstructions: _readme, tutorial, intro, currentTranslation: lang });
                             })
                         }
-                        onBugClick={() => this.openWindow(`https://github.com/learnpack/learnpack/issues/new?assignees=&labels=&template=bug_report.md&title=`)}
+                        onBugClick={() => this.openWindow(this.props.repository !== null ? `https://github.com/learnpack/learnpack/issues/new?assignees=&labels=&template=bug_report.md&title=Excercise%20Bug&body=1.Exercise%20Name:%20${this.props.currentExercise}%20%202.Gitpod%20URL:%20${this.props.currentUrl}%20%203.Repository%20URL:%20${this.props.repository}`:`https://github.com/learnpack/learnpack/issues/new?assignees=&labels=&template=bug_report.md&title=Excercise%20Bug&body=1.Exercise%20Name:%20${this.props.currentExercise}%20%202.Gitpod%20URL:%20${this.props.currentUrl}`)}
                         onOpen={status => this.setState({ menuOpened: status })}
                     >
                         { !this.state.menuOpened && this.state.possibleActions.length > 0 && (!this.state.introOpen || !this.state.intro) &&
@@ -547,7 +547,7 @@ export default class Home extends React.Component{
 
                         
 
-                        onBugClick={() => this.openWindow(`https://github.com/learnpack/learnpack/issues/new?assignees=&labels=&template=bug_report.md&title=`)}
+                        onBugClick={() => this.openWindow(this.props.repository !== null ? `https://github.com/learnpack/learnpack/issues/new?assignees=&labels=&template=bug_report.md&title=Excercise%20Bug&body=1.Exercise%20Name:%20${this.props.currentExercise}%20%202.Gitpod%20URL:%20${this.props.currentUrl}%20%203.Repository%20URL:%20${this.props.repository}`:`https://github.com/learnpack/learnpack/issues/new?assignees=&labels=&template=bug_report.md&title=Excercise%20Bug&body=1.Exercise%20Name:%20${this.props.currentExercise}%20%202.Gitpod%20URL:%20${this.props.currentUrl}`)}
                         onLanguageClick={lang => loadReadme(this.state.current.slug, lang).then(readme => {
                                 const tutorial = !readme.attributes ? null : readme.attributes.tutorial || null;
                                 const intro = !readme.attributes ? null : readme.attributes.intro || null;
