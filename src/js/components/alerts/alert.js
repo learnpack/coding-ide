@@ -1,5 +1,5 @@
 /* eslint-disable */
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { render, unmountComponentAtNode } from "react-dom";
 
 const WINDOW_TYPE = {
@@ -20,29 +20,39 @@ const Alert = ({ title, onAccept, onCancel, type }) => {
     removeElement();
   };
 
-  const onCancelClick = () => {
+  const onCancelClick = useCallback(() => {
     close();
     onCancel && onCancel(false);
-  };
+  }, []);
 
-  const onAcceptClick = () => {
+  const onAcceptClick = useCallback(() => {
     close();
     onAccept && onAccept(type === WINDOW_TYPE.PROMPT ? value : true);
-  };
+  }, [value]);
 
-  const onKeyPress = (e) => {
-    if (e.keyCode === 27) {
-      onCancelClick();
-    } else {
-      if (e.keyCode === 13) {
-        onAcceptClick();
+  const onKeyPress = useCallback(
+    (e) => {
+      if (e.keyCode === 27) {
+        onCancelClick();
+      } else {
+        if (e.keyCode === 13) {
+          onAcceptClick();
+        }
       }
-    }
-  };
+    },
+    [onCancelClick, onAcceptClick]
+  );
+
+  useEffect(() => {
+    document.addEventListener("keydown", onKeyPress);
+
+    return () => {
+      document.removeEventListener("keydown", onKeyPress);
+    };
+  }, [onKeyPress]);
 
   useEffect(() => {
     setIsOpen(true);
-    document.addEventListener("keydown", onKeyPress);
 
     setTimeout(() => {
       if (type === WINDOW_TYPE.PROMPT) {
@@ -51,10 +61,6 @@ const Alert = ({ title, onAccept, onCancel, type }) => {
         buttonRef.current.focus();
       }
     }, 50);
-
-    return () => {
-      document.removeEventListener("keydown", onKeyPress);
-    };
   }, []);
 
   return (
