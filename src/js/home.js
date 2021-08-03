@@ -124,6 +124,7 @@ export default class Home extends React.Component{
             currentFileName: null,
             currentFileExtension: null,
             possibleActions: [],
+            configObject: null,
 
             tutorial: null,
             intro: null,
@@ -158,7 +159,8 @@ export default class Home extends React.Component{
                     if(urlConfig) urlConfig = JSON.parse(atob(urlConfig));
 
                     configObject = Object.assign(configObject, { config: deepMerge(configObject.config, urlConfig) });
-
+                    this.setState({ configObject: configObject});
+                    
                     // google tag manager and analytics extra information
                     TagManager.dataLayer({ dataLayer: {
                         slug: configObject.slug,
@@ -438,7 +440,7 @@ export default class Home extends React.Component{
                                 this.setState({ currentInstructions: _readme, tutorial, intro, currentTranslation: lang });
                             })
                         }
-                        onBugClick={() => this.openWindow(`https://github.com/learnpack/learnpack/issues/new?assignees=&labels=&template=bug_report.md&title=`)}
+                        onBugClick={() => this.openWindow(this.state.configObject.repository !== null ? `https://github.com/learnpack/learnpack/issues/new?assignees=&labels=&template=bug_report.md&title=Excercise%20Bug&body=1.Exercise%20Name:%20${this.state.current.slug}%0D%0A%0D%0A2.Repository%20URL:%20${this.state.configObject.repository}`:`https://github.com/learnpack/learnpack/issues/new?template=bug_report.md&title=Excercise%20Bug&body=1.Exercise%20Name:%20${this.state.current.slug}`)}
                         onOpen={status => this.setState({ menuOpened: status })}
                     >
                         { !this.state.menuOpened && this.state.possibleActions.length > 0 && (!this.state.introOpen || !this.state.intro) &&
@@ -547,7 +549,7 @@ export default class Home extends React.Component{
 
                         
 
-                        onBugClick={() => this.openWindow(`https://github.com/learnpack/learnpack/issues/new?assignees=&labels=&template=bug_report.md&title=`)}
+                        onBugClick={() => this.openWindow(this.state.configObject.repository !== null ? `https://github.com/learnpack/learnpack/issues/new?assignees=&labels=&template=bug_report.md&title=Excercise%20Bug&body=1.Exercise%20Name:%20${this.state.current.slug}%0D%0A%0D%0A2.Repository%20URL:%20${this.state.configObject.repository}`:`https://github.com/learnpack/learnpack/issues/new?template=bug_report.md&title=Excercise%20Bug&body=1.Exercise%20Name:%20${this.state.current.slug}`)}
                         onLanguageClick={lang => loadReadme(this.state.current.slug, lang).then(readme => {
                                 const tutorial = !readme.attributes ? null : readme.attributes.tutorial || null;
                                 const intro = !readme.attributes ? null : readme.attributes.intro || null;
