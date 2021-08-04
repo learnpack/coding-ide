@@ -4,3 +4,6 @@
 .exercise-intro .btn.btn-success{
     height: 48px;
 }
+.exercise-intro iframe{
+    margin: 0; padding: 0;
+}
