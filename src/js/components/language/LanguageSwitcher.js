@@ -16,11 +16,11 @@ export const LanguageSwitcher = ({ current, translations, onClick }) => {
         <ul>
             {
                 _enabledLangs.map( lang => {
-                    return (<li key={lang} onClick={() => lang != current ? onClick(lang) : null}><Icon url={`https://www.countryflags.io/${lang}/flat/64.png`} /></li>);
+                    return (<li key={lang} onClick={() => lang != current ? onClick(lang) : null}><Icon url={`http://www.geognos.com/api/en/countries/flag/${lang.toUpperCase()}.png`} /></li>);
                 })
             }
         </ul>
-        <Icon className={"current"} url={`https://www.countryflags.io/${current}/flat/64.png`} />
+        <Icon className={"current"} url={`http://www.geognos.com/api/en/countries/flag/${current.toUpperCase()}.png`} />
     </div>);
 };
 LanguageSwitcher.propTypes = {
