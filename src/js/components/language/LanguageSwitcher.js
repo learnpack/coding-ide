@@ -1,6 +1,14 @@
 import React from "react";
 import PropTypes from 'prop-types';
+import en from './en.svg';
+import es from './es.svg';
 import './language-switcher.scss';
+
+const flags = {
+  "en": en,
+  "us": en,
+  "es": es
+};
 
 const Icon = ({ url, className }) => <div className={"icon btn btn-sm "+className} style={{ backgroundImage: `url(${url}` }}>{' '}</div>;
 Icon.propTypes = {
@@ -16,11 +24,11 @@ export const LanguageSwitcher = ({ current, translations, onClick }) => {
         <ul>
             {
                 _enabledLangs.map( lang => {
-                    return (<li key={lang} onClick={() => lang != current ? onClick(lang) : null}><Icon url={`http://www.geognos.com/api/en/countries/flag/${lang.toUpperCase()}.png`} /></li>);
+                    return (<li key={lang} onClick={() => lang != current ? onClick(lang) : null}><Icon url={flags[lang]} /></li>);
                 })
             }
         </ul>
-        <Icon className={"current"} url={`http://www.geognos.com/api/en/countries/flag/${current.toUpperCase()}.png`} />
+        <Icon className={"current"} url={flags[current]} />
     </div>);
 };
 LanguageSwitcher.propTypes = {
