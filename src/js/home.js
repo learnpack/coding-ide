@@ -350,12 +350,32 @@ export default class Home extends React.Component{
         if(this.state.introOpen && this.state.intro) showHelp = false;
 
         if(!this.state.host) return (<div className="alert alert-danger text-center"> ⚠️ No host specified for the application</div>);
-        if(this.state.error) return <div className="alert alert-danger">
-            {this.state.error}
-            <SmartInput onSave={(value) => {
-                window.location = "?host="+value;
-            }} />
-        </div>;
+        if(this.state.error){
+            if(this.state.error.includes("There was an error loading the exercise")){
+                return (
+                    <InternalError
+                        gif={this.state.consoleStatus.gif}
+                        config={this.state.config}
+                        message={this.state.error}
+                        solution={
+                            <ol>
+                                <li>1. Close the web view.</li>
+                                <li>2. Press CTRL+C on the terminal to close learnpack.</li>
+                                <li>3. Type <i><strong>learnpack start</strong></i> on the terminal to run learnpack again.</li>
+                            </ol>
+                        }
+                        repo={this.state.config ? this.state.config.repository : null}
+                        video={this.state.consoleStatus.video}
+                    />
+                );
+            }
+
+            return (
+                <div className="alert alert-danger">
+                    {this.state.error}
+                </div>
+            );
+        }
         const size = {
             vertical: {
                 min: 50,
