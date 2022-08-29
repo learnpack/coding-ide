@@ -359,9 +359,9 @@ export default class Home extends React.Component{
                         message={this.state.error}
                         solution={
                             <ol>
-                                <li>1. Close the web view.</li>
-                                <li>2. Press CTRL+C on the terminal to close learnpack.</li>
-                                <li>3. Type <i><strong>learnpack start</strong></i> on the terminal to run learnpack again.</li>
+                                <li>1. Close the LearnPack window.</li>
+                                <li>2. Press CTRL+C on the terminal to close LearnPack.</li>
+                                <li>3. Type <i><strong>learnpack start</strong></i> on the terminal to run LearnPack again.</li>
                             </ol>
                         }
                         repo={this.state.config ? this.state.config.repository : null}
