@@ -2,12 +2,14 @@ import React from "react";
 import PropTypes from 'prop-types';
 import en from './en.svg';
 import es from './es.svg';
+import fr from './fr.svg';
 import './language-switcher.scss';
 
 const flags = {
   "en": en,
   "us": en,
-  "es": es
+  "es": es,
+  "fr": fr
 };
 
 const Icon = ({ url, className }) => <div className={"icon btn btn-sm "+className} style={{ backgroundImage: `url(${url}` }}>{' '}</div>;
